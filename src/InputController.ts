@@ -81,6 +81,31 @@ export class InputController {
     };
     this.activePointers.set(e.pointerId, point);
 
+    // Workaround for MacOS Chrome: synthesize a second pointer if two mouse buttons are pressed
+    if (
+      this.activePointers.size === 1 &&
+      e.pointerType === "mouse" &&
+      e.buttons === 3 && // left + right
+      !this.activePointers.has(-1)
+    ) {
+      // Synthesize a fake pointer for the second button
+      const fakePointer: Point = {
+        x: point.x + 10, // offset slightly for visualization
+        y: point.y + 10,
+        id: -1,
+      };
+      this.activePointers.set(-1, fakePointer);
+      this.determineGesture();
+    }
+    // Remove fake pointer if only one button is pressed
+    if (
+      this.activePointers.has(-1) &&
+      (e.buttons === 1 || e.buttons === 2)
+    ) {
+      this.activePointers.delete(-1);
+      this.setState("oneFingerRotation");
+    }
+
     if (this.activePointers.size === 1) {
       if (this.currentState === "idle" && e.buttons === 0) {
         console.log("hover detected");

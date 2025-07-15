@@ -26,4 +26,9 @@ canvas {
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  touch-action: none; /* Disable default touch actions */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
